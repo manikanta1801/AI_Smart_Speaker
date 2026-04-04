@@ -1,0 +1,24 @@
+{
+  "name": "mi-gemini-speaker",
+  "version": "1.0.0",
+  "description": "Mi Smart Speaker powered by Google Gemini AI via Netlify Functions",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "netlify-cli": "^16.9.1"
+  },
+  "type": "module"
+}

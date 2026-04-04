@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Gemini Speaker — AI Assistant Dashboard</title>
+  <meta name="description" content="Mi Smart Speaker powered by Google Gemini AI. Voice AI assistant via Google Actions webhook." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:           #0a0a12;
+      --bg-card:      #12121e;
+      --bg-card2:     #1a1a2e;
+      --border:       rgba(255,255,255,0.07);
+      --blue:         #4f8ef7;
+      --blue-glow:    rgba(79,142,247,0.25);
+      --purple:       #9b6df7;
+      --purple-glow:  rgba(155,109,247,0.2);
+      --cyan:         #38d9f5;
+      --green:        #34d399;
+      --yellow:       #fbbf24;
+      --red:          #f87171;
+      --text:         #e8e8f0;
+      --text-muted:   #7070a0;
+      --text-dim:     #4a4a70;
+      --radius:       16px;
+      --radius-sm:    10px;
+      --font:         'Inter', sans-serif;
+      --mono:         'JetBrains Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background Orbs ── */
+    .bg-orbs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      animation: drift 20s infinite ease-in-out;
+    }
+    .orb-1 { width: 600px; height: 600px; background: var(--purple); top: -200px; left: -200px; animation-duration: 25s; }
+    .orb-2 { width: 500px; height: 500px; background: var(--blue);   bottom: -150px; right: -150px; animation-duration: 20s; animation-delay: -8s; }
+    .orb-3 { width: 350px; height: 350px; background: var(--cyan);   top: 40%; left: 50%; animation-duration: 18s; animation-delay: -4s; }
+    @keyframes drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%      { transform: translate(30px,-40px) scale(1.05); }
+      66%      { transform: translate(-20px,20px) scale(0.97); }
+    }
+
+    /* ── Layout ── */
+    .page { position: relative; z-index: 1; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,18,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em;
+    }
+    .nav-logo .icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .nav-pill {
+      background: rgba(52,211,153,0.15);
+      color: var(--green);
+      border: 1px solid rgba(52,211,153,0.3);
+      padding: 4px 12px; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(79,142,247,0.1);
+      border: 1px solid rgba(79,142,247,0.3);
+      color: var(--blue); border-radius: 99px;
+      padding: 6px 16px; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.8); }
+    }
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.15rem; color: var(--text-muted);
+      max-width: 560px; margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+
+    /* ── Speaker Viz ── */
+    .speaker-viz {
+      position: relative;
+      width: 140px; height: 140px;
+      margin: 0 auto 60px;
+    }
+    .speaker-ring {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      animation: spin-ring 8s linear infinite;
+    }
+    .speaker-ring:nth-child(1) {
+      background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                  linear-gradient(135deg, var(--blue), var(--purple)) border-box;
+      animation-duration: 8s;
+    }
+    .speaker-ring:nth-child(2) {
+      inset: 12px;
+      background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                  linear-gradient(135deg, var(--purple), var(--cyan)) border-box;
+      animation-duration: 6s; animation-direction: reverse;
+    }
+    .speaker-ring:nth-child(3) {
+      inset: 24px;
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  linear-gradient(135deg, var(--cyan), var(--blue)) border-box;
+      animation-duration: 10s;
+    }
+    @keyframes spin-ring {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .speaker-core {
+      position: absolute;
+      inset: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 0 40px var(--blue-glow);
+      animation: core-pulse 3s ease-in-out infinite;
+    }
+    @keyframes core-pulse {
+      0%,100% { box-shadow: 0 0 40px var(--blue-glow); }
+      50%      { box-shadow: 0 0 60px var(--purple-glow), 0 0 80px var(--blue-glow); }
+    }
+
+    /* ── Wave Bars ── */
+    .wave-bars {
+      display: flex; align-items: center; justify-content: center;
+      gap: 4px; margin-top: 16px;
+    }
+    .wave-bar {
+      width: 3px; border-radius: 99px;
+      background: linear-gradient(to top, var(--blue), var(--purple));
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(1)  { height: 12px; animation-delay: 0s; }
+    .wave-bar:nth-child(2)  { height: 24px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3)  { height: 18px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4)  { height: 32px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5)  { height: 20px; animation-delay: 0.4s; }
+    .wave-bar:nth-child(6)  { height: 28px; animation-delay: 0.5s; }
+    .wave-bar:nth-child(7)  { height: 16px; animation-delay: 0.6s; }
+    .wave-bar:nth-child(8)  { height: 22px; animation-delay: 0.7s; }
+    .wave-bar:nth-child(9)  { height: 14px; animation-delay: 0.8s; }
+    @keyframes wave {
+      0%,100% { transform: scaleY(0.3); opacity: 0.5; }
+      50%      { transform: scaleY(1);   opacity: 1; }
+    }
+
+    /* ── Flow Diagram ── */
+    .flow { padding: 80px 0; }
+    .section-label {
+      text-align: center;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 16px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 1.9rem; font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 14px;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text-muted); font-size: 1rem;
+      max-width: 500px; margin: 0 auto 60px;
+      line-height: 1.6;
+    }
+    .flow-steps {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 0;
+    }
+    .flow-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+      min-width: 140px; max-width: 160px;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .flow-step:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); }
+    .flow-icon {
+      font-size: 2rem; margin-bottom: 10px;
+      display: block;
+    }
+    .flow-step h3 { font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+    .flow-step p  { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+    .flow-arrow {
+      font-size: 1.2rem; color: var(--text-dim);
+      padding: 0 8px; flex-shrink: 0;
+    }
+
+    /* ── Cards Grid ── */
+    .cards { padding: 0 0 80px; }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
+    }
+    .card-icon.blue   { background: rgba(79,142,247,0.15); }
+    .card-icon.purple { background: rgba(155,109,247,0.15); }
+    .card-icon.cyan   { background: rgba(56,217,245,0.15); }
+    .card-icon.green  { background: rgba(52,211,153,0.15); }
+    .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .card p  { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── Test Section ── */
+    .test-section { padding: 0 0 100px; }
+    .test-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .test-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .test-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .test-status {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.green  { background: var(--green); }
+    .status-dot.yellow { background: var(--yellow); }
+    .test-body { padding: 28px; }
+    .input-row {
+      display: flex; gap: 12px;
+      margin-bottom: 20px;
+    }
+    #query-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.92rem;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #query-input:focus { border-color: var(--blue); }
+    #query-input::placeholder { color: var(--text-dim); }
+    .btn {
+      padding: 12px 24px;
+      border: none; border-radius: var(--radius-sm);
+      font-family: var(--font); font-weight: 600; font-size: 0.88rem;
+      cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .response-area {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      min-height: 80px;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      position: relative;
+    }
+    .response-label {
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-dim); font-weight: 600; margin-bottom: 8px;
+    }
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .chip {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 0.78rem; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .chip:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: rgba(79,142,247,0.08);
+    }
+    .webhook-url-box {
+      margin-top: 20px;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .webhook-label {
+      font-size: 0.72rem; color: var(--text-dim); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+    .webhook-url {
+      font-family: var(--mono); font-size: 0.8rem;
+      color: var(--cyan); flex: 1;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .copy-btn {
+      background: rgba(56,217,245,0.1);
+      border: 1px solid rgba(56,217,245,0.3);
+      color: var(--cyan);
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 0.72rem; cursor: pointer; font-family: var(--font);
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(56,217,245,0.2); }
+
+    /* ── Setup Steps ── */
+    .setup { padding: 0 0 100px; }
+    .steps-list { display: flex; flex-direction: column; gap: 16px; }
+    .step-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: flex; gap: 20px; align-items: flex-start;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem;
+    }
+    .step-content h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 6px; }
+    .step-content p  { font-size: 0.86rem; color: var(--text-muted); line-height: 1.6; }
+    .step-content a  { color: var(--blue); text-decoration: none; }
+    .step-content a:hover { text-decoration: underline; }
+    code {
+      font-family: var(--mono); font-size: 0.82em;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1px 6px; border-radius: 5px;
+      color: var(--cyan);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-dim); font-size: 0.82rem;
+    }
+    .footer-logo { font-weight: 800; color: var(--text-muted); margin-bottom: 8px; }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .flow-steps { flex-direction: column; gap: 12px; }
+      .flow-arrow { transform: rotate(90deg); }
+      .input-row { flex-direction: column; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="page">
+  <!-- NAV -->
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <div class="icon">🎙️</div>
+          Mi Gemini Speaker
+        </div>
+        <nav class="nav-links">
+          <a href="#how-it-works">How it works</a>
+          <a href="#test">Test</a>
+          <a href="#setup">Setup</a>
+        </nav>
+        <span class="nav-pill">● Live</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Powered by Gemini 2.0 Flash
+      </div>
+
+      <div class="speaker-viz">
+        <div class="speaker-ring"></div>
+        <div class="speaker-ring"></div>
+        <div class="speaker-ring"></div>
+        <div class="speaker-core">🤖</div>
+      </div>
+
+      <div class="wave-bars" aria-hidden="true">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+
+      <br><br>
+
+      <h1>Your Mi Speaker,<br><span class="gradient-text">Now Runs Gemini AI</span></h1>
+      <p>Google Assistant meets Gemini 2.0 Flash. Ask anything — from science to stories — and hear it spoken back, instantly. Zero cost, full power.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="flow" id="how-it-works">
+    <div class="container">
+      <div class="section-label">Architecture</div>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Five steps, zero cost, under 3 seconds from voice to answer.</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <span class="flow-icon">🗣️</span>
+          <h3>You Speak</h3>
+          <p>"Hey Google, talk to my assistant"</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-icon">📡</span>
+          <h3>Google Actions</h3>
+          <p>Routes query to your webhook</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-icon">⚡</span>
+          <h3>Netlify Function</h3>
+          <p>Processes &amp; calls Gemini API</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-icon">🧠</span>
+          <h3>Gemini 2.0</h3>
+          <p>Generates a smart response</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-icon">🔊</span>
+          <h3>Spoken Back</h3>
+          <p>Played on your Mi Speaker</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE CARDS -->
+  <section class="cards">
+    <div class="container">
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon blue">🆓</div>
+          <h3>Completely Free</h3>
+          <p>Gemini free tier gives 1,500 requests/day. Netlify gives 125,000 function calls/month. No credit card needed.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon purple">⚡</div>
+          <h3>Gemini 2.0 Flash</h3>
+          <p>The latest and fastest Gemini model. Answers are concise, voice-optimised, and markdown-free for perfect TTS playback.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon cyan">🛡️</div>
+          <h3>Graceful Fallbacks</h3>
+          <p>Rate limit hit? API error? The function always returns a friendly voice response — your speaker never goes silent unexpectedly.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🎛️</div>
+          <h3>Fully Customisable</h3>
+          <p>Change the AI personality, response length, language, or model — all via environment variables. No code changes needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEST CONSOLE -->
+  <section class="test-section" id="test">
+    <div class="container">
+      <div class="section-label">Live Test</div>
+      <h2 class="section-title">Test Your Webhook</h2>
+      <p class="section-sub">Simulate a voice query and see the response your speaker would speak.</p>
+
+      <div class="test-box">
+        <div class="test-header">
+          <h2>🧪 Webhook Test Console</h2>
+          <div class="test-status">
+            <div class="status-dot green" id="status-dot"></div>
+            <span id="status-text">Ready</span>
+          </div>
+        </div>
+        <div class="test-body">
+          <p class="response-label">Try a sample question:</p>
+          <div class="chips" id="sample-chips">
+            <div class="chip" onclick="setQuery('What is the speed of light?')">What is the speed of light?</div>
+            <div class="chip" onclick="setQuery('Tell me a short joke')">Tell me a short joke</div>
+            <div class="chip" onclick="setQuery('What is photosynthesis?')">What is photosynthesis?</div>
+            <div class="chip" onclick="setQuery('Who invented the telephone?')">Who invented the telephone?</div>
+            <div class="chip" onclick="setQuery('What is 15 percent of 240?')">What is 15% of 240?</div>
+          </div>
+
+          <div class="input-row">
+            <input
+              type="text"
+              id="query-input"
+              placeholder="Type your question here..."
+              autocomplete="off"
+              onkeydown="if(event.key==='Enter') testWebhook()"
+            />
+            <button class="btn btn-primary" id="ask-btn" onclick="testWebhook()">
+              Ask Gemini
+            </button>
+          </div>
+
+          <p class="response-label">Gemini's voice response:</p>
+          <div class="response-area" id="response-area">
+            Response will appear here after you ask a question...
+          </div>
+
+          <div class="webhook-url-box">
+            <span class="webhook-label">Webhook URL</span>
+            <span class="webhook-url" id="webhook-display">/.netlify/functions/gemini-webhook</span>
+            <button class="copy-btn" onclick="copyWebhook()">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETUP GUIDE -->
+  <section class="setup" id="setup">
+    <div class="container">
+      <div class="section-label">Getting Started</div>
+      <h2 class="section-title">Setup Guide</h2>
+      <p class="section-sub">From zero to Gemini-powered speaker in 6 steps.</p>
+
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Get Your Free Gemini API Key</h3>
+            <p>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a>, sign in with Google, and click <strong>Create API Key</strong>. No credit card needed. You get 1,500 free requests per day.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Push Code to GitHub</h3>
+            <p>Create a new repo at <a href="https://github.com/new" target="_blank" rel="noopener">github.com/new</a> called <code>mi-gemini-speaker</code>. Push the project folder to it using <code>git init</code>, <code>git add .</code>, <code>git commit -m "init"</code>, <code>git push</code>.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Deploy on Netlify</h3>
+            <p>Go to <a href="https://netlify.com" target="_blank" rel="noopener">netlify.com</a>, click <strong>Add new site → Import from Git</strong>, select your repo. In <strong>Site configuration → Environment variables</strong>, add <code>GEMINI_API_KEY</code> with your key. Click Deploy.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Create a Google Action</h3>
+            <p>Go to <a href="https://console.actions.google.com" target="_blank" rel="noopener">console.actions.google.com</a>. Create a new project → Custom → Blank. Set an invocation name like <strong>"my AI assistant"</strong>. Under Fulfillment, set your webhook to: <code>https://your-site.netlify.app/.netlify/functions/gemini-webhook</code></p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h3>Test in Actions Simulator</h3>
+            <p>In the Actions Console, click <strong>Test</strong>. Use the simulator to say <em>"Talk to my AI assistant"</em>. You should hear Gemini respond. Fix any issues before going live.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h3>Use on Your Mi Speaker 🎉</h3>
+            <p>Say <strong>"Hey Google, talk to my AI assistant"</strong> on your Mi Speaker. Ask any question, then say <strong>"goodbye"</strong> or <strong>"stop"</strong> when done. That's it — enjoy your Gemini-powered speaker!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-logo">🎙️ Mi Gemini Speaker</div>
+      <p>Built with Gemini 2.0 Flash · Netlify · Google Actions · All for ₹0</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // ── Set webhook URL dynamically
+  const base = window.location.origin;
+  const webhookPath = "/.netlify/functions/gemini-webhook";
+  document.getElementById("webhook-display").textContent = base + webhookPath;
+
+  // ── Sample question helper
+  function setQuery(text) {
+    document.getElementById("query-input").value = text;
+    document.getElementById("query-input").focus();
+  }
+
+  // ── Copy webhook URL
+  function copyWebhook() {
+    const url = base + webhookPath;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector(".copy-btn");
+      btn.textContent = "Copied!";
+      setTimeout(() => btn.textContent = "Copy", 2000);
+    });
+  }
+
+  // ── Test the webhook
+  async function testWebhook() {
+    const input = document.getElementById("query-input");
+    const responseArea = document.getElementById("response-area");
+    const askBtn = document.getElementById("ask-btn");
+    const statusDot = document.getElementById("status-dot");
+    const statusText = document.getElementById("status-text");
+    const query = input.value.trim();
+
+    if (!query) {
+      responseArea.textContent = "⚠️ Please type a question first.";
+      return;
+    }
+
+    // UI: loading state
+    askBtn.disabled = true;
+    askBtn.innerHTML = '<span class="spinner"></span>Asking Gemini...';
+    responseArea.textContent = "Sending to Gemini...";
+    statusDot.className = "status-dot yellow";
+    statusDot.style.animation = "pulse 0.6s infinite";
+    statusText.textContent = "Processing...";
+
+    try {
+      const payload = {
+        handler: { name: "gemini_handler" },
+        intent: {
+          name: "question",
+          query: query
+        },
+        session: { id: "test-session-" + Date.now() },
+        user: { locale: "en-IN" }
+      };
+
+      const start = Date.now();
+      const resp = await fetch(webhookPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      }
+
+      const data = await resp.json();
+      const speech = data?.prompt?.firstSimple?.speech ||
+                     data?.prompt?.firstSimple?.text ||
+                     "No response received.";
+
+      responseArea.textContent = `🔊 "${speech}"\n\n— Gemini 2.0 Flash  (${elapsed}s)`;
+      statusDot.className = "status-dot green";
+      statusText.textContent = `Done · ${elapsed}s`;
+
+    } catch (err) {
+      responseArea.textContent = `❌ Error: ${err.message}\n\nMake sure:\n• GEMINI_API_KEY env var is set in Netlify\n• The function deployed successfully`;
+      statusDot.className = "status-dot";
+      statusDot.style.background = "var(--red)";
+      statusText.textContent = "Error";
+    } finally {
+      askBtn.disabled = false;
+      askBtn.textContent = "Ask Gemini";
+    }
+  }
+</script>
+</body>
+</html>
