@@ -1,21 +1,21 @@
 // ═══════════════════════════════════════════════════════════════
-//  gemini-webhook.js
-//  Mi Smart Speaker → Gemini AI Bridge
+//  ai-webhook.js
+//  Mi Smart Speaker → DeepSeek AI Bridge
 //
 //  This Netlify Function receives voice queries from Google Actions,
-//  sends them to Gemini 2.0 Flash, and returns spoken responses.
+//  sends them to DeepSeek API, and returns spoken responses.
 // ═══════════════════════════════════════════════════════════════
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 
 // ── Config ────────────────────────────────────────────────────
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL   = process.env.GEMINI_MODEL   || "gemini-2.0-flash";
-const MAX_TOKENS     = parseInt(process.env.GEMINI_MAX_TOKENS || "300", 10);
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_MODEL   = process.env.DEEPSEEK_MODEL   || "deepseek-chat";
+const MAX_TOKENS       = parseInt(process.env.DEEPSEEK_MAX_TOKENS || "300", 10);
 
-// System prompt — shapes how Gemini responds for a voice speaker
+// System prompt — shapes how DeepSeek responds for a voice speaker
 const SYSTEM_PROMPT = `You are a helpful, friendly, and concise AI voice assistant 
-running on a smart speaker. Your name is Gemini.
+running on a smart speaker. Your name is DeepSeek.
 
 Important rules for voice responses:
 - Keep answers SHORT and CONVERSATIONAL (2-4 sentences max)
@@ -142,14 +142,14 @@ export const handler = async (event) => {
   }
 
   // ── Check API key
-  if (!GEMINI_API_KEY) {
-    console.error("GEMINI_API_KEY environment variable is not set!");
+  if (!DEEPSEEK_API_KEY) {
+    console.error("DEEPSEEK_API_KEY environment variable is not set!");
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(
         buildActionsResponse({
-          speech: "I'm not configured yet. Please add the Gemini API key to the environment variables.",
+          speech: "I'm not configured yet. Please add the DeepSeek API key to the environment variables.",
           endConversation: true,
         })
       ),
@@ -164,7 +164,7 @@ export const handler = async (event) => {
       body: JSON.stringify(
         buildActionsResponse({
           speech:
-            "Hi! I'm Gemini, your AI assistant. What would you like to know?",
+            "Hi! I'm DeepSeek, your AI assistant. What would you like to know?",
         })
       ),
     };
@@ -199,26 +199,29 @@ export const handler = async (event) => {
     };
   }
 
-  // ── Call Gemini API
+  // ── Call DeepSeek API
   try {
-    console.log(`[Gemini] Query: "${userQuery.substring(0, 100)}..."`);
+    console.log(`[DeepSeek] Query: "${userQuery.substring(0, 100)}..."`);
 
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: GEMINI_MODEL,
-      systemInstruction: SYSTEM_PROMPT,
-      generationConfig: {
-        maxOutputTokens: MAX_TOKENS,
-        temperature: 0.8,
-        topP: 0.95,
-      },
+    const openai = new OpenAI({
+      baseURL: 'https://api.deepseek.com',
+      apiKey: DEEPSEEK_API_KEY
     });
 
-    const result = await model.generateContent(userQuery);
-    const rawText = result.response.text();
+    const completion = await openai.chat.completions.create({
+      model: DEEPSEEK_MODEL,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userQuery }
+      ],
+      max_tokens: MAX_TOKENS,
+      temperature: 0.8,
+    });
+
+    const rawText = completion.choices[0].message.content;
     const cleanText = cleanForVoice(rawText);
 
-    console.log(`[Gemini] Response: "${cleanText.substring(0, 150)}..."`);
+    console.log(`[DeepSeek] Response: "${cleanText.substring(0, 150)}..."`);
 
     return {
       statusCode: 200,
@@ -231,11 +234,12 @@ export const handler = async (event) => {
       ),
     };
   } catch (error) {
-    console.error("[Gemini] API Error:", error.message);
+    console.error("[DeepSeek] API Error:", error.message);
 
     // Friendly fallback for rate limits
     const isRateLimit = error.message?.includes("429") ||
-                        error.message?.includes("quota");
+                        error.message?.includes("quota") ||
+                        error.message?.includes("rate limit");
     const fallback = isRateLimit
       ? "I'm getting too many requests right now. Please try again in a minute."
       : "Sorry, I ran into a problem getting an answer. Please try again.";

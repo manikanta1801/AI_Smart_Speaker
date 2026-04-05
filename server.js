@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import * as dotenv from 'dotenv';
-import { handler } from './netlify/functions/gemini-webhook.js';
+import { handler } from './netlify/functions/ai-webhook.js';
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 // Simulation of Netlify Function
-app.all('/.netlify/functions/gemini-webhook', async (req, res) => {
+app.all('/.netlify/functions/ai-webhook', async (req, res) => {
   const event = {
     httpMethod: req.method,
     body: JSON.stringify(req.body),
@@ -38,6 +38,6 @@ app.listen(PORT, () => {
   console.log(`\n───────────────────────────────────────────────────`);
   console.log(` 🚀 Local test server running!`);
   console.log(` 🌐 Dashboard: http://localhost:${PORT}`);
-  console.log(` ⚙️  Webhook:   http://localhost:${PORT}/.netlify/functions/gemini-webhook`);
+  console.log(` ⚙️  Webhook:   http://localhost:${PORT}/.netlify/functions/ai-webhook`);
   console.log(`───────────────────────────────────────────────────\n`);
 });

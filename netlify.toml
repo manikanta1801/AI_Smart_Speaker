@@ -15,7 +15,7 @@
 
 [[redirects]]
   from = "/webhook"
-  to = "/.netlify/functions/gemini-webhook"
+  to = "/.netlify/functions/ai-webhook"
   status = 200
 
 [dev]

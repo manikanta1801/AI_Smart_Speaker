@@ -8,10 +8,10 @@
     "build": "echo 'No build step needed'"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "openai": "^6.33.0"
   },
   "engines": {
     "node": ">=18.0.0"
