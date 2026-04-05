@@ -8,11 +8,6 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ── Config ────────────────────────────────────────────────────
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL   = process.env.GEMINI_MODEL   || "gemini-2.0-flash";
-const MAX_TOKENS     = parseInt(process.env.GEMINI_MAX_TOKENS || "300", 10);
-
 // System prompt — shapes how the AI responds for a voice speaker
 const SYSTEM_PROMPT = `You are a helpful, friendly, and concise AI voice assistant 
 running on a smart speaker. Your name is Gemini.
@@ -72,6 +67,11 @@ function buildActionsResponse({ speech, endConversation = false }) {
 // ── Main Handler ──────────────────────────────────────────────
 
 export const handler = async (event) => {
+  // ── Config (Dynamic lookup to ensure process.env is ready) ──
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+  const GEMINI_MODEL   = process.env.GEMINI_MODEL   || "gemini-2.0-flash";
+  const MAX_TOKENS     = parseInt(process.env.GEMINI_MAX_TOKENS || "300", 10);
+
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
