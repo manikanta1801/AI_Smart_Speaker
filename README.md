@@ -14,9 +14,9 @@ The best part? **All the tools used have generous free tiers**, meaning this won
 ## 🚀 Quick Setup Guide
 
 ### 1. Get a Free DeepSeek API Key
-1. Head over to [Google AI Studio](https://aistudio.google.com/app/apikey).
-2. Sign in with your Google Account.
-3. Click **"Create API Key"** and copy the resulting string (`AIza...`). 
+1. Head over to [Platform DeepSeek](https://platform.deepseek.com/).
+2. Sign in with your account.
+3. Click to create an API key and copy the resulting string (`sk-...`). 
 
 ### 2. Fork or Clone this Repo
 Push this entire folder to a new **public** GitHub repository (e.g., `mi-deepseek-speaker`).
@@ -25,7 +25,7 @@ Push this entire folder to a new **public** GitHub repository (e.g., `mi-deepsee
 1. Go to [Netlify](https://www.netlify.com/) and create a free account.
 2. Click **Add new site** → **Import from an existing repository** (select your GitHub repo).
 3. Before you hit Deploy, click on **Environment variables** and add:
-   - Key: `deepseek_API_KEY`
+   - Key: `DEEPSEEK_API_KEY`
    - Value: `[your copied key from step 1]`
 4. Click **Deploy**. Netlify will give you a public URL (e.g., `https://your-site.netlify.app`).
 
@@ -34,8 +34,8 @@ Push this entire folder to a new **public** GitHub repository (e.g., `mi-deepsee
 2. Click **New Project** → Check **Custom** → **Blank project**.
 3. Go to **Invocation** and set a name (like "my ai assistant").
 4. Go to **Webhook** in the left menu.
-5. Paste your Netlify URL followed by `/.netlify/functions/deepseek-webhook`. 
-   - Example: `https://your-site.netlify.app/.netlify/functions/deepseek-webhook`
+5. Paste your Netlify URL followed by `/.netlify/functions/ai-webhook`. 
+   - Example: `https://your-site.netlify.app/.netlify/functions/ai-webhook`
 6. Click **Save**.
 
 ### 5. Talk to Your Speaker!
@@ -53,8 +53,8 @@ You can test the webhook logic without deploying:
 
 1. Copy `.env.example` to `.env` and add your API key.
 2. Install dependencies: `npm install`
-3. Run the local dev server: `npm run dev`
+3. Run the local dev server: `node server.js`
 4. Open the test page at `http://localhost:8888` and use the built-in UI to test.
 
 ## ⚙️ Customizing the AI
-Open `netlify/functions/deepseek-webhook.js` and modify the `SYSTEM_PROMPT` variable to give your AI a different personality or rules!
+Open `netlify/functions/ai-webhook.js` and modify the `SYSTEM_PROMPT` variable to give your AI a different personality or rules!
