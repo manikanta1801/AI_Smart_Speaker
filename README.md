@@ -1,11 +1,11 @@
-# 🎙️ Mi Smart Speaker → DeepSeek AI Webhook
+# 🎙️ Mi Smart Speaker → Gemini AI Webhook
 
-Convert your Mi Smart Speaker into a DeepSeek-powered assistant for ₹0 using Google Actions and Netlify Functions.
+Convert your Mi Smart Speaker into a Gemini-powered assistant for ₹0 using Google Actions and Netlify Functions.
 
-![Mi DeepSeek Speaker](public/favicon.ico)
+![Mi Gemini Speaker](public/favicon.ico)
 
 ## 📌 What is this?
-Your Mi Smart Speaker runs Google Assistant. This project creates a **Google Action** ("Hey Google, talk to my AI assistant") that forwards everything you say to a **Netlify Function**, which passes it to the **DeepSeek API**. The response from DeepSeek is then spoken back to you immediately.
+Your Mi Smart Speaker runs Google Assistant. This project creates a **Google Action** ("Hey Google, talk to my AI assistant") that forwards everything you say to a **Netlify Function**, which passes it to the **Gemini 2.0 Flash API**. The response from Gemini is then spoken back to you immediately.
 
 The best part? **All the tools used have generous free tiers**, meaning this won't cost you a rupee to run.
 
@@ -13,19 +13,19 @@ The best part? **All the tools used have generous free tiers**, meaning this won
 
 ## 🚀 Quick Setup Guide
 
-### 1. Get a Free DeepSeek API Key
-1. Head over to [Platform DeepSeek](https://platform.deepseek.com/).
+### 1. Get a Free Gemini 2.0 Flash API Key
+1. Head over to [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Sign in with your account.
-3. Click to create an API key and copy the resulting string (`sk-...`). 
+3. Click to create an API key and copy the resulting string (`AIza...`). 
 
 ### 2. Fork or Clone this Repo
-Push this entire folder to a new **public** GitHub repository (e.g., `mi-deepseek-speaker`).
+Push this entire folder to a new **public** GitHub repository (e.g., `mi-gemini-speaker`).
 
 ### 3. Deploy to Netlify
 1. Go to [Netlify](https://www.netlify.com/) and create a free account.
 2. Click **Add new site** → **Import from an existing repository** (select your GitHub repo).
 3. Before you hit Deploy, click on **Environment variables** and add:
-   - Key: `DEEPSEEK_API_KEY`
+   - Key: `GEMINI_API_KEY`
    - Value: `[your copied key from step 1]`
 4. Click **Deploy**. Netlify will give you a public URL (e.g., `https://your-site.netlify.app`).
 
@@ -42,7 +42,7 @@ Push this entire folder to a new **public** GitHub repository (e.g., `mi-deepsee
 1. In the Actions console, click **Test** at the top. Enable testing for your account.
 2. Walk over to your Mi Smart Speaker.
 3. Say: **"Hey Google, talk to my ai assistant."**
-4. It will say: "Hi! I'm DeepSeek, your AI assistant. What would you like to know?"
+4. It will say: "Hi! I'm Gemini, your AI assistant. What would you like to know?"
 5. Start asking questions! Say "goodbye" to exit.
 
 ---

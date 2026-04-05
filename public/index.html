@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi DeepSeek Speaker — AI Assistant Dashboard</title>
-  <meta name="description" content="Mi Smart Speaker powered by Google DeepSeek AI. Voice AI assistant via Google Actions webhook." />
+  <title>Mi Gemini Speaker — AI Assistant Dashboard</title>
+  <meta name="description" content="Mi Smart Speaker powered by Google Gemini AI. Voice AI assistant via Google Actions webhook." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -484,7 +484,7 @@
       <div class="nav-inner">
         <div class="nav-logo">
           <div class="icon">🎙️</div>
-          Mi DeepSeek Speaker
+          Mi Gemini Speaker
         </div>
         <nav class="nav-links">
           <a href="#how-it-works">How it works</a>
@@ -501,7 +501,7 @@
     <div class="container">
       <div class="hero-badge">
         <span class="dot"></span>
-        Powered by DeepSeek Chat
+        Powered by Gemini 2.0 Flash
       </div>
 
       <div class="speaker-viz">
@@ -525,8 +525,8 @@
 
       <br><br>
 
-      <h1>Your Mi Speaker,<br><span class="gradient-text">Now Runs DeepSeek AI</span></h1>
-      <p>Google Assistant meets DeepSeek Chat. Ask anything — from science to stories — and hear it spoken back, instantly. Zero cost, full power.</p>
+      <h1>Your Mi Speaker,<br><span class="gradient-text">Now Runs Gemini AI</span></h1>
+      <p>Google Assistant meets Gemini 2.0 Flash. Ask anything — from science to stories — and hear it spoken back, instantly. Zero cost, full power.</p>
     </div>
   </section>
 
@@ -552,12 +552,12 @@
         <div class="flow-step">
           <span class="flow-icon">⚡</span>
           <h3>Netlify Function</h3>
-          <p>Processes &amp; calls DeepSeek API</p>
+          <p>Processes &amp; calls Gemini API</p>
         </div>
         <div class="flow-arrow">→</div>
         <div class="flow-step">
           <span class="flow-icon">🧠</span>
-          <h3>DeepSeek 2.0</h3>
+          <h3>Gemini 2.0</h3>
           <p>Generates a smart response</p>
         </div>
         <div class="flow-arrow">→</div>
@@ -577,12 +577,12 @@
         <div class="card">
           <div class="card-icon blue">🆓</div>
           <h3>Completely Free</h3>
-          <p>DeepSeek free tier gives 1,500 requests/day. Netlify gives 125,000 function calls/month. No credit card needed.</p>
+          <p>Gemini free tier gives 1,500 requests/day. Netlify gives 125,000 function calls/month. No credit card needed.</p>
         </div>
         <div class="card">
           <div class="card-icon purple">⚡</div>
-          <h3>DeepSeek Chat</h3>
-          <p>The latest and fastest DeepSeek model. Answers are concise, voice-optimised, and markdown-free for perfect TTS playback.</p>
+          <h3>Gemini 2.0 Flash</h3>
+          <p>The latest and fastest Gemini model. Answers are concise, voice-optimised, and markdown-free for perfect TTS playback.</p>
         </div>
         <div class="card">
           <div class="card-icon cyan">🛡️</div>
@@ -632,11 +632,11 @@
               onkeydown="if(event.key==='Enter') testWebhook()"
             />
             <button class="btn btn-primary" id="ask-btn" onclick="testWebhook()">
-              Ask DeepSeek
+              Ask Gemini
             </button>
           </div>
 
-          <p class="response-label">DeepSeek's voice response:</p>
+          <p class="response-label">Gemini's voice response:</p>
           <div class="response-area" id="response-area">
             Response will appear here after you ask a question...
           </div>
@@ -656,13 +656,13 @@
     <div class="container">
       <div class="section-label">Getting Started</div>
       <h2 class="section-title">Setup Guide</h2>
-      <p class="section-sub">From zero to DeepSeek-powered speaker in 6 steps.</p>
+      <p class="section-sub">From zero to Gemini-powered speaker in 6 steps.</p>
 
       <div class="steps-list">
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-content">
-            <h3>Get Your Free DeepSeek API Key</h3>
+            <h3>Get Your Free Gemini API Key</h3>
             <p>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a>, sign in with Google, and click <strong>Create API Key</strong>. No credit card needed. You get 1,500 free requests per day.</p>
           </div>
         </div>
@@ -670,14 +670,14 @@
           <div class="step-num">2</div>
           <div class="step-content">
             <h3>Push Code to GitHub</h3>
-            <p>Create a new repo at <a href="https://github.com/new" target="_blank" rel="noopener">github.com/new</a> called <code>mi-deepseek-speaker</code>. Push the project folder to it using <code>git init</code>, <code>git add .</code>, <code>git commit -m "init"</code>, <code>git push</code>.</p>
+            <p>Create a new repo at <a href="https://github.com/new" target="_blank" rel="noopener">github.com/new</a> called <code>mi-gemini-speaker</code>. Push the project folder to it using <code>git init</code>, <code>git add .</code>, <code>git commit -m "init"</code>, <code>git push</code>.</p>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">3</div>
           <div class="step-content">
             <h3>Deploy on Netlify</h3>
-            <p>Go to <a href="https://netlify.com" target="_blank" rel="noopener">netlify.com</a>, click <strong>Add new site → Import from Git</strong>, select your repo. In <strong>Site configuration → Environment variables</strong>, add <code>deepseek_API_KEY</code> with your key. Click Deploy.</p>
+            <p>Go to <a href="https://netlify.com" target="_blank" rel="noopener">netlify.com</a>, click <strong>Add new site → Import from Git</strong>, select your repo. In <strong>Site configuration → Environment variables</strong>, add <code>gemini_API_KEY</code> with your key. Click Deploy.</p>
           </div>
         </div>
         <div class="step-item">
@@ -691,14 +691,14 @@
           <div class="step-num">5</div>
           <div class="step-content">
             <h3>Test in Actions Simulator</h3>
-            <p>In the Actions Console, click <strong>Test</strong>. Use the simulator to say <em>"Talk to my AI assistant"</em>. You should hear DeepSeek respond. Fix any issues before going live.</p>
+            <p>In the Actions Console, click <strong>Test</strong>. Use the simulator to say <em>"Talk to my AI assistant"</em>. You should hear Gemini respond. Fix any issues before going live.</p>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">6</div>
           <div class="step-content">
             <h3>Use on Your Mi Speaker 🎉</h3>
-            <p>Say <strong>"Hey Google, talk to my AI assistant"</strong> on your Mi Speaker. Ask any question, then say <strong>"goodbye"</strong> or <strong>"stop"</strong> when done. That's it — enjoy your DeepSeek-powered speaker!</p>
+            <p>Say <strong>"Hey Google, talk to my AI assistant"</strong> on your Mi Speaker. Ask any question, then say <strong>"goodbye"</strong> or <strong>"stop"</strong> when done. That's it — enjoy your Gemini-powered speaker!</p>
           </div>
         </div>
       </div>
@@ -708,8 +708,8 @@
   <!-- FOOTER -->
   <footer>
     <div class="container">
-      <div class="footer-logo">🎙️ Mi DeepSeek Speaker</div>
-      <p>Built with DeepSeek Chat · Netlify · Google Actions · All for ₹0</p>
+      <div class="footer-logo">🎙️ Mi Gemini Speaker</div>
+      <p>Built with Gemini 2.0 Flash · Netlify · Google Actions · All for ₹0</p>
     </div>
   </footer>
 </div>
@@ -752,15 +752,15 @@
 
     // UI: loading state
     askBtn.disabled = true;
-    askBtn.innerHTML = '<span class="spinner"></span>Asking DeepSeek...';
-    responseArea.textContent = "Sending to DeepSeek...";
+    askBtn.innerHTML = '<span class="spinner"></span>Asking Gemini...';
+    responseArea.textContent = "Sending to Gemini...";
     statusDot.className = "status-dot yellow";
     statusDot.style.animation = "pulse 0.6s infinite";
     statusText.textContent = "Processing...";
 
     try {
       const payload = {
-        handler: { name: "deepseek_handler" },
+        handler: { name: "gemini_handler" },
         intent: {
           name: "question",
           query: query
@@ -787,18 +787,18 @@
                      data?.prompt?.firstSimple?.text ||
                      "No response received.";
 
-      responseArea.textContent = `🔊 "${speech}"\n\n— DeepSeek Chat  (${elapsed}s)`;
+      responseArea.textContent = `🔊 "${speech}"\n\n— Gemini 2.0 Flash  (${elapsed}s)`;
       statusDot.className = "status-dot green";
       statusText.textContent = `Done · ${elapsed}s`;
 
     } catch (err) {
-      responseArea.textContent = `❌ Error: ${err.message}\n\nMake sure:\n• deepseek_API_KEY env var is set in Netlify\n• The function deployed successfully`;
+      responseArea.textContent = `❌ Error: ${err.message}\n\nMake sure:\n• gemini_API_KEY env var is set in Netlify\n• The function deployed successfully`;
       statusDot.className = "status-dot";
       statusDot.style.background = "var(--red)";
       statusText.textContent = "Error";
     } finally {
       askBtn.disabled = false;
-      askBtn.textContent = "Ask DeepSeek";
+      askBtn.textContent = "Ask Gemini";
     }
   }
 </script>
